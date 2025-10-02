@@ -1,0 +1,40 @@
+name: gpu-cloud-platform
+region: nyc
+services:
+  - name: backend
+    environment_slug: python
+    github:
+      repo: YOUR_GITHUB_REPO
+      branch: main
+      deploy_on_push: true
+    build_command: pip install -r requirements.txt
+    run_command: uvicorn app.main:app --host 0.0.0.0 --port 8000
+    envs:
+      - key: DATABASE_URL
+        scope: RUN_TIME
+        value: ${db.DATABASE_URL}
+      - key: MODAL_TOKEN_ID
+        scope: RUN_TIME
+        value: "ak-RX7dzUs2ZRixw1v3y245AY"
+      - key: MODAL_TOKEN_SECRET
+        scope: RUN_TIME
+        value: "as-vVIPUypywn54SAXoguyNJU"
+        type: SECRET
+      - key: JWT_SECRET
+        scope: RUN_TIME
+        value: "your-secret-key-change-in-production"
+        type: SECRET
+      - key: DEPLOYMENT_TYPE
+        scope: RUN_TIME
+        value: "saas"
+    http_port: 8000
+    instance_count: 1
+    instance_size_slug: basic-xxs
+    routes:
+      - path: /api
+
+databases:
+  - name: db
+    engine: PG
+    production: false
+    version: "15"
